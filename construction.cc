@@ -115,14 +115,6 @@ void MyDetectorConstruction::DefineMaterial()
 
 	EJ212->SetMaterialPropertiesTable(EJ212MPT);
 	
-	//make scintillators as only virtual planes
-	/*EJ212->GetMaterialPropertiesTable()->RemoveProperty("SCINTILLATIONCOMPONENT1");
-	EJ212->GetMaterialPropertiesTable()->RemoveProperty("SCINTILLATIONYIELD");
-	EJ212->GetMaterialPropertiesTable()->RemoveProperty("FASTTIMECONSTANT");
-	EJ212->GetMaterialPropertiesTable()->RemoveProperty("RESOLUTIONSCALE");*/
-
-
-	
 }
 
 G4VPhysicalVolume *MyDetectorConstruction::Construct()
@@ -141,7 +133,6 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	detectorSolid = new G4Box("DetectorSolid", 0.50 * cm, 25.0 * cm, 25.0 * cm);
 	detectorLogical = new G4LogicalVolume(detectorSolid, worldMat, "DetectorLogical");
 	
-G4cout << "In Construct: detectorLogical = " << detectorLogical << G4endl;
 
 	G4double detPosX = 2.40 * m;  // 1 m ahead
 	G4double detPosY = -43.0 * cm;               // align vertically with scints
@@ -169,8 +160,8 @@ G4cout << "In Construct: detectorLogical = " << detectorLogical << G4endl;
         converterBox = new G4Box("Converter", 75.0 * um, 7.0 * cm, 3.0 * cm);
         converterLV = new G4LogicalVolume(converterBox, beryllium, "Converter");
         G4VisAttributes* converterVis = new G4VisAttributes(G4Colour::Red());
-	converterVis->SetForceSolid(true);
-	converterLV->SetVisAttributes(converterVis);
+		converterVis->SetForceSolid(true);
+		converterLV->SetVisAttributes(converterVis);
         physConverter = new G4PVPlacement(nullptr, G4ThreeVector(-2.97 * m, 0, 0), converterLV, "Converter", logicWorld, false, 0, true);
 
 
@@ -213,10 +204,7 @@ G4cout << "In Construct: detectorLogical = " << detectorLogical << G4endl;
 	// Place inside World
 	new G4PVPlacement(rotation, G4ThreeVector(-0.75 * m, 0, 0), vacuumChamberLV, "VacuumChamber", logicWorld, false, 0);
 	
-	
-
-        return physWorld;
-
+	return physWorld;
 	
 }
 
@@ -274,9 +262,7 @@ void MyDetectorConstruction::ConstructScintillator()
 	for (G4int i = 0; i < numBlocks; i++) 
 	{
    	G4double posY = (i - numBlocks / 2) * spacing + 9.0*cm; // Adjust for alignment
-    	//G4double posX = 40.0*cm;                             // Centered vertically
-   	//G4double posZ = 0.0 * cm;                     // Position forward of the main block
-	G4double posX = 0.0*cm;
+    G4double posX = 0.0*cm;
 	G4double posZ = 0.0 * cm;
 	
 	// Physical placement
@@ -295,9 +281,7 @@ void MyDetectorConstruction::ConstructScintillator()
 	for (G4int j = 0; j < 4; j++) 
 	{
    	G4double posY = (j - numBlocks / 2) * spacing + 3.0*cm; // Adjust for alignment
-    	//G4double posX = 42.0*cm;                             // Centered vertically
-   	//G4double posZ = 0.0 * cm;                     // Position forward of the main block
-    	G4double posX = 2.0*cm;
+    G4double posX = 2.0*cm;
 	G4double posZ = 0.0 * cm;
     	
 	// Physical placement
@@ -382,10 +366,6 @@ void MyDetectorConstruction::ConstructScintillator()
 	}
 	wrapperLV1->SetVisAttributes(G4VisAttributes::GetInvisible());
 	
-	
-	/*SetVisualizationAttributes(mainScintillatorLogical, "Main Scintillator", G4Colour(1.0, 0.0, 0.0));  // Red
-	SetVisualizationAttributes(smallScintillatorLogical, "Small Scintillator", G4Colour(0.0, 1.0, 0.0)); */ // Green
-
 }
 
 
