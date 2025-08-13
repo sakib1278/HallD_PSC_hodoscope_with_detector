@@ -157,7 +157,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	
 	
 	  // Converter (for photon interaction)
-        converterBox = new G4Box("Converter", 75.0 * um, 7.0 * cm, 3.0 * cm);
+        converterBox = new G4Box("Converter", 37.50 * um, 7.0 * cm, 3.0 * cm);
         converterLV = new G4LogicalVolume(converterBox, beryllium, "Converter");
         G4VisAttributes* converterVis = new G4VisAttributes(G4Colour::Red());
 		converterVis->SetForceSolid(true);
@@ -222,8 +222,8 @@ void MyDetectorConstruction::ConstructScintillator()
 	mainScintillatorLogical = new G4LogicalVolume(mainScintillatorSolid, EJ212, "MainScintillatorLogical");
 	
 	
-	G4Box* mainWrapperSolid = new G4Box("MainWrapper", 0.6*cm, 13*cm, 2*cm);
-	G4LogicalVolume* mainWrapperLogical = new G4LogicalVolume(mainWrapperSolid, vacuum, "MainWrapperLogical");
+	/*G4Box* mainWrapperSolid = new G4Box("MainWrapper", 0.6*cm, 13*cm, 2*cm);
+	G4LogicalVolume* mainWrapperLogical = new G4LogicalVolume(mainWrapperSolid, vacuum, "MainWrapperLogical");*/
 
 	// Physical placement
 	mainScintillatorPhysical = new G4PVPlacement(rotCW,                   // No rotation
@@ -372,13 +372,13 @@ void MyDetectorConstruction::ConstructScintillator()
 void MyDetectorConstruction::ConstructSDandField() {
     MySensitiveDetector* scintSD = new MySensitiveDetector("ScintillatorSD");
 
-    /*if (mainScintillatorLogical) {
+    if (mainScintillatorLogical) {
         mainScintillatorLogical->SetSensitiveDetector(scintSD);
     }
     
     if (smallScintillatorLogical) {
         smallScintillatorLogical->SetSensitiveDetector(scintSD);
-    }*/
+    }
     //MySensitiveDetector* bigDetSD = new MySensitiveDetector("BigDetectorSD");
     G4cout << "In SDandField: detectorLogical = " << detectorLogical << G4endl;
 

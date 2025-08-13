@@ -32,7 +32,7 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
     	G4String particleName = track->GetParticleDefinition()->GetParticleName();
 	//MyRunAction::particleCounter[particleName]++;
 	
-	MyRunAction::particleCounter1[particleName]++;
+	//MyRunAction::particleCounter1[particleName]++;
 	
 	G4String volumeName = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName();
 
@@ -59,9 +59,9 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
         
      	}
      	}
-   	//if (PDG == 11)vertexPos_e = track->GetVertexPosition();
-   	if (PDG == -11)vertexPos_p = track->GetVertexPosition();
-	vertexPos_e = track->GetVertexPosition();
+   	/*if (PDG == 11)vertexPos_e = track->GetVertexPosition();
+   	//if (PDG == -11)vertexPos_p = track->GetVertexPosition();
+	vertexPos_e = track->GetVertexPosition();*/
 	
 	G4StepPoint *preStepPoint = aStep->GetPreStepPoint();
 	G4StepPoint *postStepPoint = aStep->GetPostStepPoint();
@@ -75,29 +75,43 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
 	*/
 
 	// Only log electrons and positrons
-	G4double totalMomentum_e = -1000;
-	G4double totalMomentum_p = -1000;
+	G4double totalMomentum_e = -10000;
+	G4double totalMomentum_p = -10000;
 	
   	//if (vertexPos_e[0]<-2000 && PDG == 11 && trackHistory[trackID].count("MainScintillator1") && trackHistory[trackID].count("MainScintillator1")){
-  	 if (PDG == 22 && trackHistory[trackID].count("BigDetector"))	{  
-         posElectron = preStepPoint->GetPosition();
+  	 //if (PDG == 11 && trackHistory[trackID].count("BigDetector")){  
+         if (PDG == 11 && aStep->IsFirstStepInVolume()) {
+    	auto volumeName = preStepPoint->GetTouchableHandle()
+                                     ->GetVolume()
+                                     ->GetName();
+
+   	 if (volumeName == "BigDetector") {
+    	 posElectron = preStepPoint->GetPosition();
          momElectron = preStepPoint->GetMomentum();
          totalMomentum_e = momElectron.mag();
          energyElectron = track->GetTotalEnergy();
-         //vertexPosition = track->GetVertexPosition();
+         vertexPosition = track->GetVertexPosition();
          //counter1++;
+        }
         }
         
         //if (vertexPos_e[0]<-2000 && PDG == -11 && trackHistory[trackID].count("MainScintillator2") && trackHistory[trackID].count("SmallScintillator2")) { 
-         /*if (PDG == -11 && trackHistory[trackID].count("BigDetector")) {  
-         posPositron = preStepPoint->GetPosition();
+         //if (PDG == -11 && trackHistory[trackID].count("BigDetector")) {  
+        if (PDG == -11 && aStep->IsFirstStepInVolume()) {
+    	auto volumeName = preStepPoint->GetTouchableHandle()
+                                     ->GetVolume()
+                                     ->GetName();
+
+   	 if (volumeName == "BigDetector") {
+    	 posPositron = preStepPoint->GetPosition();
          momPositron = preStepPoint->GetMomentum();
          totalMomentum_p = momPositron.mag();
          energyPositron = track->GetTotalEnergy();
          //vertexPosition = track->GetVertexPosition();
-        }*/
+        }
+}
         
-        if (PDG == -11 && trackHistory[trackID].count("BigDetector")) {
+       /* if (PDG == -11 && trackHistory[trackID].count("BigDetector")) {
     	auto preStepPoint = aStep->GetPreStepPoint();
     	auto touchable = preStepPoint->GetTouchableHandle();
 
@@ -122,14 +136,20 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
 
     // Optional: You can also get vertex position in global coords, transform if needed
     // vertexPosition = rot->inverse() * track->GetVertexPosition();
-}
+}*/
         
         G4double angleIncident = -999.;
 	G4double angleIncident_e  = -999.;
 	G4double angleIncident_ep = -999.;
 	G4double angleIncident_g  = -999.;
 
-	if (trackHistory[trackID].count("BigDetector") && aStep->IsFirstStepInVolume()) {
+	//if (trackHistory[trackID].count("BigDetector") && aStep->IsFirstStepInVolume()) {
+	if (aStep->IsFirstStepInVolume()) {
+    	auto volumeName = preStepPoint->GetTouchableHandle()
+                                     ->GetVolume()
+                                     ->GetName();
+
+   	 if (volumeName == "BigDetector") {
 
     // Get global pre-step position
     G4ThreeVector globalPos = preStepPoint->GetPosition();
@@ -149,7 +169,7 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
     G4ThreeVector normal = transform.TransformAxis(localNormal);
 
         if (normal.dot(preStepPoint->GetMomentumDirection()) < 0) {
-    	normal = -normal; // flip normal if it's pointing same way as momentum
+    	normal = -normal; // flip normal if it's pointing same way as momentum, avoiding negative angle
 	}
 
     	angleIncident = 90.0 - preStepPoint->GetMomentumDirection()
@@ -158,6 +178,7 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
     	if (PDG == 11)  angleIncident_e  = angleIncident;
     	if (PDG == -11) angleIncident_ep = angleIncident;
     	if (PDG == 22)  angleIncident_g  = angleIncident;
+    	}
 }
 
         /*if (PDG == 11 && trackHistory[trackID].count("MainScintillator") && trackHistory[trackID].count("SmallScintillator")){
@@ -171,78 +192,76 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhis
 	
 	G4int evt = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
 	
-	G4ThreeVector pos3 = G4ThreeVector(-9999., -9999., -9999.);
-	G4ThreeVector mom3 = G4ThreeVector(-9999., -9999., -9999.);
-	G4double energy3 = -5000.0, total_mom3=-5000.0;
+	G4ThreeVector posPhoton = G4ThreeVector(-9999., -9999., -9999.);
+	G4ThreeVector momPhoton = G4ThreeVector(-9999., -9999., -9999.);
+	G4double energyPhoton = -5000.0, total_momPhoton=-5000.0;
 	
 	/*G4ThreeVector pos4 = aStep->GetPreStepPoint()->GetPosition();
 
 
 if (pos4.x() > 230.0*cm) {*/
 	
-	if (aStep->GetPreStepPoint()->GetTouchableHandle()
-        ->GetVolume()->GetName() == "BigDetector" &&
-    aStep->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
+	
 
-    auto track1 = aStep->GetTrack();
-    G4String particleName3 = track1->GetParticleDefinition()->GetParticleName();
-    pos3 = aStep->GetPreStepPoint()->GetPosition();
-    mom3 = aStep->GetPreStepPoint()->GetMomentum();
-    energy3 = track1->GetTotalEnergy();
-    total_mom3 = mom3.mag();
-}
+	//if (PDG == 22 && trackHistory[trackID].count("BigDetector")) {
+        if (PDG == 22 && aStep->IsFirstStepInVolume()) {
+    	auto volumeName = preStepPoint->GetTouchableHandle()
+                                     ->GetVolume()
+                                     ->GetName();
 
-	/*if (trackHistory[trackID].count("BigDetector")) {
-        auto track1 = aStep->GetTrack();
+   	 if (volumeName == "BigDetector") {
+    	 auto track1 = aStep->GetTrack();
         G4String particleName3 = track1->GetParticleDefinition()->GetParticleName();
- 	pos3 = aStep->GetPreStepPoint()->GetPosition();
-    	mom3 = aStep->GetPreStepPoint()->GetMomentum();
-    	energy3 = track->GetTotalEnergy();
-    	total_mom3 = mom3.mag();
-}*/
+ 	posPhoton = aStep->GetPreStepPoint()->GetPosition();
+    	momPhoton = aStep->GetPreStepPoint()->GetMomentum();
+    	energyPhoton = track->GetTotalEnergy();
+    	total_momPhoton = momPhoton.mag();
+    	}
+}
 	
 	G4AnalysisManager *man = G4AnalysisManager::Instance();
 	
 	//&& (posElectron[0] > 1300 || posPositron[0] > 1300)
 	//if  (((energyElectron > 100 && energyElectron < 8900) || (energyPositron > 100 && energyPositron < 8900)) && (posElectron[0] > 1300 || posPositron[0] > 1300)){
 	man->FillNtupleIColumn(0, evt);
-	man->FillNtupleDColumn(1, pos3[0]);
-	man->FillNtupleDColumn(2, pos3[1]);
-	man->FillNtupleDColumn(3, pos3[2]);
-	man->FillNtupleDColumn(4, total_mom3);
-	//man->FillNtupleDColumn(5, momPhoton[1]);
-	//man->FillNtupleDColumn(6, momPhoton[2]);
-	man->FillNtupleDColumn(5, totalMomentum_e);
-	man->FillNtupleDColumn(6, totalMomentum_p);
-	man->FillNtupleDColumn(7, posElectron[0]);
-	man->FillNtupleDColumn(8, posElectron[1]);
-	man->FillNtupleDColumn(9, posElectron[2]);
-	man->FillNtupleDColumn(10, momElectron[0]);
-	man->FillNtupleDColumn(11, momElectron[1]);
-	man->FillNtupleDColumn(12, momElectron[2]);
-	man->FillNtupleDColumn(13, energyElectron);
-	man->FillNtupleDColumn(14, posPositron[0]);
-	man->FillNtupleDColumn(15, posPositron[1]);
-	man->FillNtupleDColumn(16, posPositron[2]);
-	man->FillNtupleDColumn(17, momPositron[0]);
-	man->FillNtupleDColumn(18, momPositron[1]);
-	man->FillNtupleDColumn(19, momPositron[2]);
-	man->FillNtupleDColumn(20, energyPositron);
-	man->FillNtupleDColumn(21, mom3[0]);
-	man->FillNtupleDColumn(22, mom3[1]);
-	man->FillNtupleDColumn(23, mom3[2]);
-	/*man->FillNtupleDColumn(21, vertexPosition[0]);
-	man->FillNtupleDColumn(22, vertexPosition[1]);
-	man->FillNtupleDColumn(23, vertexPosition[2]);*/
-	man->FillNtupleDColumn(24, vertexPos_e[0]);
-	man->FillNtupleDColumn(25, vertexPos_p[0]);
-	man->FillNtupleDColumn(26, energy3);  
-
-	//man->FillNtupleDColumn(26, counter1);
-	man->FillNtupleDColumn(27, angleIncident);
-	man->FillNtupleDColumn(28, angleIncident_e);
-	man->FillNtupleDColumn(29, angleIncident_ep);
-	man->FillNtupleDColumn(30, angleIncident_g);
+	
+	man->FillNtupleDColumn(1, posElectron[0]);
+	man->FillNtupleDColumn(2, posElectron[1]);
+	man->FillNtupleDColumn(3, posElectron[2]);
+	man->FillNtupleDColumn(4, momElectron[0]);
+	man->FillNtupleDColumn(5, momElectron[1]);
+	man->FillNtupleDColumn(6, momElectron[2]);
+	man->FillNtupleDColumn(7, totalMomentum_e);
+	man->FillNtupleDColumn(8, energyElectron);
+	
+	man->FillNtupleDColumn(9, posPositron[0]);
+	man->FillNtupleDColumn(10, posPositron[1]);
+	man->FillNtupleDColumn(11, posPositron[2]);
+	man->FillNtupleDColumn(12, momPositron[0]);
+	man->FillNtupleDColumn(13, momPositron[1]);
+	man->FillNtupleDColumn(14, momPositron[2]);
+	man->FillNtupleDColumn(15, totalMomentum_p);
+	man->FillNtupleDColumn(16, energyPositron);
+	
+	man->FillNtupleDColumn(17, posPhoton[0]);
+	man->FillNtupleDColumn(18, posPhoton[1]);
+	man->FillNtupleDColumn(19, posPhoton[2]);
+	man->FillNtupleDColumn(20, momPhoton[0]);
+	man->FillNtupleDColumn(21, momPhoton[1]);
+	man->FillNtupleDColumn(22, momPhoton[2]);
+	man->FillNtupleDColumn(23, total_momPhoton);
+	man->FillNtupleDColumn(24, energyPhoton);
+	
+	man->FillNtupleDColumn(25, angleIncident);
+	man->FillNtupleDColumn(26, angleIncident_e);
+	man->FillNtupleDColumn(27, angleIncident_ep);
+	man->FillNtupleDColumn(28, angleIncident_g);
+	
+	man->FillNtupleDColumn(29, vertexPosition[0]);
+	man->FillNtupleDColumn(30, vertexPosition[1]);
+	man->FillNtupleDColumn(31, vertexPosition[2]);
+	/*man->FillNtupleDColumn(24, vertexPos_e[0]);
+	man->FillNtupleDColumn(25, vertexPos_p[0]);*/
 	
 	man->AddNtupleRow(0);
 	
@@ -263,11 +282,17 @@ if (pos4.x() > 230.0*cm) {*/
 	}*/
    	 
 	//}
-	if (trackHistory[trackID].count("BigDetector")){
+	//if (trackHistory[trackID].count("BigDetector")){
+	if (aStep->IsFirstStepInVolume()) {
+    	auto volumeName = preStepPoint->GetTouchableHandle()
+                                     ->GetVolume()
+                                     ->GetName();
+
+   	 if (volumeName == "BigDetector") {
 	G4String particleName = track->GetParticleDefinition()->GetParticleName();
 	MyRunAction::particleCounter[particleName]++;
 	}
-	
+	}
 	return true;
 }
 
