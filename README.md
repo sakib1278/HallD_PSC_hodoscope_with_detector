@@ -11,5 +11,7 @@
 
 ## Requirements
 Geant4 (built with GEANT4_USE_QT and GEANT4_USE_OPENGL_X11 if you want GUI/visualization)
+
 CMake 3.10+
+
 A C++17 compatible compiler
