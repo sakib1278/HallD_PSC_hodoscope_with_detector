@@ -47,16 +47,9 @@ MyRunAction::MyRunAction()
 	man->CreateNtupleDColumn("vertexPositionY_e");
 	man->CreateNtupleDColumn("vertexPositionZ_e");
 		
-	
-	/*man->CreateNtupleDColumn("trackID");
-	man->CreateNtupleDColumn("parentID");*/
+
 	man->FinishNtuple(0);
 	
-	
-	/*man->CreateH1("px_hist", "Photon Momentum Distribution", 200, 0, 7000);
-	man->SetH1XAxisTitle(0, "Energy (MeV)");  // X-axis title
-	man->SetH1YAxisTitle(0, "Counts");  // Y-axis title
-	man->CreateH1("E_hist", "Photon Energy Distribution", 100, 0, 0.03);*/
 	
 }
 
@@ -72,7 +65,7 @@ void MyRunAction::BeginOfRunAction(const G4Run* run)
 	std::stringstream strRunID;
 	strRunID << runID;
 	
-	//man->OpenFile("/home/sakib/Geant4/psc/output_45gev_"+strRunID.str()+".root");
+
 	man->OpenFile("/home/sakib/Geant4/output_psc/hallD_check_vertex_"+strRunID.str()+".root");
 	
 }
@@ -92,28 +85,15 @@ void MyRunAction::EndOfRunAction(const G4Run* run) {
 	
    	 G4cout << "Run " << run->GetRunID() << " ended." << G4endl;
     
-    	// Print the particle count statistics at the end of the run
-    	/*G4cout << "Particle counts hitting the detector:" << G4endl;
-    	for (const auto &entry : particleCounter) {
-        G4cout << entry.first << ": " << entry.second << G4endl;*/
-        std::ofstream outfile("/home/sakib/Geant4/output_psc/particle_counts_det5_check2"+strRunID1.str()+".txt");
-        //outfile <<  "All Particles going through both scintillators: "  << std::endl;
+    	
+    std::ofstream outfile("/home/sakib/Geant4/output_psc/particle_counts_det5_check2"+strRunID1.str()+".txt");
+       
 	outfile <<  "All Particles going through Detector 5: "  << std::endl;
 	for (const auto &entry : particleCounter) {
    	 outfile << entry.first << ": " << entry.second << std::endl;
-   	 //outfile << "electrons from vertex: " << counter1 << std::endl;
-   	 //outfile << "electrons in total: " << counter2 << std::endl;
 	}
 	
 	outfile.close();
 	
-	/*std::ofstream outfile1("/home/sakib/Geant4/output_psc/particle_count_scints_check2"+strRunID1.str()+".txt");
-	outfile1 <<  "Particles with vertex <-1500 going through both scintillators: "  << std::endl;
-	for (const auto &entry : particleCounter1) {
-   	 outfile1 << entry.first << ": " << entry.second << std::endl;
-	}
-	outfile1.close();*/
-	
-
 }
  
