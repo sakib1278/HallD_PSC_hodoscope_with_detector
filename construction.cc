@@ -221,10 +221,6 @@ void MyDetectorConstruction::ConstructScintillator()
 	mainScintillatorSolid = new G4Box("MainScintillator", 0.50*cm, 12.50*cm, 1.50*cm);
 	mainScintillatorLogical = new G4LogicalVolume(mainScintillatorSolid, EJ212, "MainScintillatorLogical");
 	
-	
-	/*G4Box* mainWrapperSolid = new G4Box("MainWrapper", 0.6*cm, 13*cm, 2*cm);
-	G4LogicalVolume* mainWrapperLogical = new G4LogicalVolume(mainWrapperSolid, vacuum, "MainWrapperLogical");*/
-
 	// Physical placement
 	mainScintillatorPhysical = new G4PVPlacement(rotCW,                   // No rotation
                       			G4ThreeVector(100.*cm, 33*cm, 0),  // Center position
@@ -345,15 +341,14 @@ void MyDetectorConstruction::ConstructScintillator()
                       G4ThreeVector(posX, -posY, posZ),
                       smallScintillatorLogical, 
                       "SmallScintillator2", 
-                      //logicWorld,
                       wrapperLV1, 
                       false, 
-                      l, // Unique copy number
+                      l, 							// Unique copy number
                       true);
                       
         new G4PVPlacement(
-    			rotCCW,                             // No rotation inside wrapper
-   			G4ThreeVector(141*cm, -34*cm, 0),              // Centered
+    			rotCCW,                             // rotation inside wrapper
+   			G4ThreeVector(141*cm, -34*cm, 0),             
     			wrapperLV1, 
     			"ScintInsideWrapper",
     			logicWorld,
@@ -379,14 +374,11 @@ void MyDetectorConstruction::ConstructSDandField() {
     if (smallScintillatorLogical) {
         smallScintillatorLogical->SetSensitiveDetector(scintSD);
     }
-    //MySensitiveDetector* bigDetSD = new MySensitiveDetector("BigDetectorSD");
-    G4cout << "In SDandField: detectorLogical = " << detectorLogical << G4endl;
-
+    
     if (detectorLogical){
     detectorLogical->SetSensitiveDetector(scintSD);
     }
-    //G4SDManager::GetSDMpointer()->AddNewDetector(bigDetSD);
-
+   
 }
 
 
