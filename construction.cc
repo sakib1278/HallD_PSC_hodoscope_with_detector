@@ -4,18 +4,14 @@
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 #include "G4UserLimits.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4ProductionCuts.hh"
+#include "G4Region.hh"
+
 
 
 MyDetectorConstruction::MyDetectorConstruction()
 {
-	fMessenger = new G4GenericMessenger(this, "/detector/", "Detector Construction");
-	
-	fMessenger->DeclareProperty("nCols", nCols, "Number of columns");
-	fMessenger->DeclareProperty("nRows", nRows, "Number of rows");
-	
-	nCols = 100;
-	nRows = 100;
-	
 	DefineMaterial();
 }
 
@@ -120,36 +116,33 @@ void MyDetectorConstruction::DefineMaterial()
 G4VPhysicalVolume *MyDetectorConstruction::Construct()
 {
 	//World
-	solidWorld = new G4Box("solidWorld", 4.5*m, 2.10*m, 2.10*m);
+	solidWorld = new G4Box("solidWorld", 2.5*m, 2.10*m, 6.50*m);
 	logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
 	physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, 0, true);
 	
 	
 	//Detector
-	solidDetector = new G4Box("solidDetector", 3.0*cm, 2.0*m, 2.*m);
+	/*solidDetector = new G4Box("solidDetector", 2.0*m, 2.0*m, 3.*cm);
 	logicDetector = new G4LogicalVolume(solidDetector, worldMat, "logicDetector");
-	physDetector = new G4PVPlacement(0, G4ThreeVector(4.0*m, 0, 0), logicDetector, "physDetector", logicWorld, false, 0, true);
+	physDetector = new G4PVPlacement(0, G4ThreeVector(0.0*m, 0, 4.0*m), logicDetector, "physDetector", logicWorld, false, 0, true);*/
 	
-	detectorSolid = new G4Box("DetectorSolid", 0.50 * cm, 25.0 * cm, 25.0 * cm);
-	detectorLogical = new G4LogicalVolume(detectorSolid, worldMat, "DetectorLogical");
+	detectorSolid = new G4Box("DetectorSolid", 25.0 * cm, 25.0 * cm, 0.50 * cm);
+	detectorLogical = new G4LogicalVolume(detectorSolid, vacuum, "DetectorLogical");
 	
-
-	G4double detPosX = 2.40 * m;  // 1 m ahead
-	G4double detPosY = -43.0 * cm;               // align vertically with scints
-	G4double detPosZ = 0.0 * cm;                 // centered in Z
 
 	G4RotationMatrix* rotCW1 = new G4RotationMatrix();
-	rotCW1->rotateZ(7.0 * deg);
+	rotCW1->rotateX(-7.0 * deg);
 	
 	BigDetectorPhysical= new G4PVPlacement(rotCW1,
-		  G4ThreeVector(detPosX, detPosY, detPosZ),
+		  G4ThreeVector(0.0, -43.0 * cm, 5.37 * m),
                   detectorLogical,
                   "BigDetector",
                   logicWorld,
                   false,
                   0,
                   true);
-
+        
+        
 	// Construct Scintillator
 	ConstructScintillator();
 	
@@ -157,25 +150,25 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	
 	
 	  // Converter (for photon interaction)
-        converterBox = new G4Box("Converter", 37.50 * um, 7.0 * cm, 3.0 * cm);
+        converterBox = new G4Box("Converter", 3.0 * cm, 7.0 * cm, 37.50 * um);
         converterLV = new G4LogicalVolume(converterBox, beryllium, "Converter");
         G4VisAttributes* converterVis = new G4VisAttributes(G4Colour::Red());
 		converterVis->SetForceSolid(true);
 		converterLV->SetVisAttributes(converterVis);
-        physConverter = new G4PVPlacement(nullptr, G4ThreeVector(-2.97 * m, 0, 0), converterLV, "Converter", logicWorld, false, 0, true);
+        physConverter = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, 0 * m), converterLV, "Converter", logicWorld, false, 0, true);
 
 
 
         // Dipole Magnet (outside vacuum chamber)
-        magnetBox = new G4Box("Magnet", 0.45 * m, 0.5 * m, 0.1 * m);
+        magnetBox = new G4Box("Magnet", 0.05 * m, 0.5 * m, 0.45 * m);
         magnetLV = new G4LogicalVolume(magnetBox, worldMat, "Magnet");
         /*G4VisAttributes* magnetVis = new G4VisAttributes(G4Colour::Green());
 	magnetVis->SetForceSolid(true);
 	magnetLV->SetVisAttributes(magnetVis);*/
-        physMagnet = new G4PVPlacement(nullptr, G4ThreeVector(-1.95 * m, 0, 0), magnetLV, "Magnet", logicWorld, false, 0, true);
+        physMagnet = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, 1.02 * m), magnetLV, "Magnet", logicWorld, false, 0, true);
 
         // Magnetic Field in Dipole Magnet
-        G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(0, 0, 1.662 * tesla));
+        G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(-1.662 * tesla, 0, 0));
         G4FieldManager* fieldManager = new G4FieldManager(magField);
         magnetLV->SetFieldManager(fieldManager, true);
         
@@ -183,10 +176,10 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 
 	// Define Trapezoidal Vacuum Chamber Cross-section
 	std::vector<G4TwoVector> trapezoidPoints = {
-    	G4TwoVector(-0.20 * m, -0.75 * m),  // Bottom-left
-    	G4TwoVector( 0.20 * m, -0.75 * m),  // Bottom-right
-    	G4TwoVector( 0.50 * m,  0.75 * m),  // Top-right (wider part)
-    	G4TwoVector(-0.50 * m,  0.75 * m)   // Top-left (wider part)
+    	G4TwoVector(-0.75 * m, -0.20 * m),  // Bottom-left
+    	G4TwoVector(-0.75 * m, 0.20 * m),  // Bottom-right
+    	G4TwoVector(0.75 * m, 0.50 * m),  // Top-right (wider part)
+    	G4TwoVector(0.75 * m, -0.50 * m)   // Top-left (wider part)
 	};
 
 	// Set extrusion depth along Z-axis
@@ -195,15 +188,38 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	G4ExtrudedSolid* vacuumChamberShape = new G4ExtrudedSolid("VacuumChamber", trapezoidPoints, halfDepth, 		G4TwoVector(0,0), 1.0, G4TwoVector(0,0), 1.0);
 
 	// Create Logical Volume
-	G4LogicalVolume* vacuumChamberLV = new G4LogicalVolume(vacuumChamberShape, vacuum, "VacuumChamber");
+	vacuumChamberLV = new G4LogicalVolume(vacuumChamberShape, vacuum, "VacuumChamber");
 
 	// Rotate by 90 degrees around X to align along Y
 	G4RotationMatrix* rotation = new G4RotationMatrix();
-	rotation->rotateZ(90 * deg);
-
-	// Place inside World
-	new G4PVPlacement(rotation, G4ThreeVector(-0.75 * m, 0, 0), vacuumChamberLV, "VacuumChamber", logicWorld, false, 0);
+	rotation->rotateY(90 * deg);
 	
+	// Place inside World
+	new G4PVPlacement(rotation, G4ThreeVector(0, 0, 2.22 * m), vacuumChamberLV, "VacuumChamber", logicWorld, false, 0);
+
+	// Shield dimensions
+G4NistManager* nist = G4NistManager::Instance();
+// Define absorbing material (kills particles)
+G4Material* BlackHole = new G4Material("BlackHole", 1., 1.*g/mole, 1.*g/cm3);
+
+	// Low-Z front layer
+G4Box* frontPolyBox = new G4Box("FrontPoly", 1.0*m, 1.0*m, 5.0*cm);
+//G4LogicalVolume* frontPolyLV = new G4LogicalVolume(frontPolyBox, polyethylene, "FrontPolyLV");
+
+
+// Create slits using subtraction
+G4Box* slit1 = new G4Box("Slit1", 1.0*cm, 16.0*cm, 10.0*cm);
+G4Box* slit2 = new G4Box("Slit2", 1.0*cm, 16.0*cm, 10.0*cm);
+
+G4ThreeVector slitPos1(0, 42*cm, 0);
+G4ThreeVector slitPos2(0, -42*cm, 0);
+
+G4SubtractionSolid* frontWithSlits = new G4SubtractionSolid("FrontWithSlits", frontPolyBox, slit1, 0, slitPos1);
+frontWithSlits = new G4SubtractionSolid("FrontWithSlits2", frontWithSlits, slit2, 0, slitPos2);
+G4LogicalVolume* frontLVwithSlits = new G4LogicalVolume(frontWithSlits, BlackHole, "FrontLVwithSlits");
+
+new G4PVPlacement(0, G4ThreeVector(0,0,500*cm - 25*cm), frontLVwithSlits, "FrontPoly", logicWorld, false, 0);
+
 	return physWorld;
 	
 }
@@ -211,19 +227,19 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 void MyDetectorConstruction::ConstructScintillator()
 {
 	G4RotationMatrix* rotCCW = new G4RotationMatrix();
-	rotCCW->rotateZ(5.0 * deg);
+	rotCCW->rotateX(-5.0 * deg);
 
 	G4RotationMatrix* rotCW = new G4RotationMatrix();
-	rotCW->rotateZ(-5.0 * deg);
+	rotCW->rotateX(+5.0 * deg);
 
 
 	// Define the large scintillator box
-	mainScintillatorSolid = new G4Box("MainScintillator", 0.50*cm, 12.50*cm, 1.50*cm);
+	mainScintillatorSolid = new G4Box("MainScintillator", 1.50*cm, 12.50*cm, 0.50*cm);
 	mainScintillatorLogical = new G4LogicalVolume(mainScintillatorSolid, EJ212, "MainScintillatorLogical");
 	
 	// Physical placement
 	mainScintillatorPhysical = new G4PVPlacement(rotCW,                   // No rotation
-                      			G4ThreeVector(100.*cm, 33*cm, 0),  // Center position
+                      			G4ThreeVector(0.*cm, 33*cm, 397.0*cm),  // Center position
                       			mainScintillatorLogical, // Logical volume
                       			"MainScintillator1",      // Name
                       			logicWorld,            // Mother volume
@@ -232,7 +248,7 @@ void MyDetectorConstruction::ConstructScintillator()
                       			true);                   // Check overlaps
                       			
         mainScintillatorPhysical = new G4PVPlacement(rotCCW,                   // No rotation
-                      			G4ThreeVector(100.*cm, -33*cm, 0),  // Center position
+                      			G4ThreeVector(0, -33*cm, 397.*cm),  // Center position
                       			mainScintillatorLogical, // Logical volume
                       			"MainScintillator2",      // Name
                       			logicWorld,            // Mother volume
@@ -244,10 +260,10 @@ void MyDetectorConstruction::ConstructScintillator()
 
 	
 	// Define the small scintillator box
-	smallScintillatorSolid = new G4Box("SmallScintillator", 1.0*cm, 3.0*cm, 2.2*cm);
+	smallScintillatorSolid = new G4Box("SmallScintillator", 2.20*cm, 3.0*cm, 1.0*cm);
 	smallScintillatorLogical = new G4LogicalVolume(smallScintillatorSolid, EJ212, "SmallScintillatorLogical");
 	
-	G4Box* wrapperBox = new G4Box("Wrapper", 0.055 * m, 0.32 * m, 0.05 * m);
+	G4Box* wrapperBox = new G4Box("Wrapper", 0.05 * m, 0.32 * m, 0.055 * m);
 	G4LogicalVolume* wrapperLV = new G4LogicalVolume(wrapperBox, vacuum, "Wrapper");
 	
 	
@@ -277,8 +293,8 @@ void MyDetectorConstruction::ConstructScintillator()
 	for (G4int j = 0; j < 4; j++) 
 	{
    	G4double posY = (j - numBlocks / 2) * spacing + 3.0*cm; // Adjust for alignment
-    G4double posX = 2.0*cm;
-	G4double posZ = 0.0 * cm;
+    G4double posX = 0.0*cm;
+	G4double posZ = 02.0 * cm;
     	
 	// Physical placement
 	smallScintillatorPhysical = new G4PVPlacement(0, 
@@ -294,7 +310,7 @@ void MyDetectorConstruction::ConstructScintillator()
 	}
 	new G4PVPlacement(
     			rotCW,                             // No rotation inside wrapper
-   			G4ThreeVector(141*cm, 34*cm, 0),              // Centered
+   			G4ThreeVector(0, 34*cm, 438*cm),              // Centered
     			wrapperLV, 
     			"ScintInsideWrapper",
     			logicWorld,
@@ -332,8 +348,8 @@ void MyDetectorConstruction::ConstructScintillator()
    	G4double posY = -((l - numBlocks / 2) * spacing + 3.0*cm); // Adjust for alignment
     	//G4double posX = 42.*cm;                             // Centered vertically
    	//G4double posZ = 0.0 * cm;                     // Position forward of the main block
-	G4double posX = 2.0*cm;
-   	G4double posZ = 0.0 * cm;
+	G4double posX = 0.0*cm;
+   	G4double posZ = 02.0 * cm;
    	
 	// Physical placement
 	smallScintillatorPhysical = new G4PVPlacement(0, 
@@ -347,8 +363,13 @@ void MyDetectorConstruction::ConstructScintillator()
                       true);
                       
         new G4PVPlacement(
+<<<<<<< HEAD
     			rotCCW,                             // rotation inside wrapper
    			G4ThreeVector(141*cm, -34*cm, 0),             
+=======
+    			rotCCW,                             // No rotation inside wrapper
+   			G4ThreeVector(0, -34*cm, 438*cm),              // Centered
+>>>>>>> Update: describe what you changed
     			wrapperLV1, 
     			"ScintInsideWrapper",
     			logicWorld,
@@ -378,7 +399,11 @@ void MyDetectorConstruction::ConstructSDandField() {
     if (detectorLogical){
     detectorLogical->SetSensitiveDetector(scintSD);
     }
+<<<<<<< HEAD
    
+=======
+    
+>>>>>>> Update: describe what you changed
 }
 
 

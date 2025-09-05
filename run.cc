@@ -7,6 +7,7 @@ std::map<std::string, int> MyRunAction::particleCounter1 = {};
 
 MyRunAction::MyRunAction()
 {
+<<<<<<< HEAD
 	G4AnalysisManager *man = G4AnalysisManager::Instance();
 	
 	man->CreateNtuple("Hits", "Hits");
@@ -51,6 +52,52 @@ MyRunAction::MyRunAction()
 	man->FinishNtuple(0);
 	
 	
+=======
+auto analysisManager = G4AnalysisManager::Instance();
+
+// One ntuple per particle type
+analysisManager->CreateNtuple("Hits", "Local coords and momentum");
+analysisManager->CreateNtupleDColumn("x_electron_cm");
+analysisManager->CreateNtupleDColumn("y_electron_cm");
+analysisManager->CreateNtupleDColumn("z_electron_cm");
+analysisManager->CreateNtupleDColumn("Px_electron_MeV");
+analysisManager->CreateNtupleDColumn("Py_electron_MeV");
+analysisManager->CreateNtupleDColumn("Pz_electron_MeV");
+analysisManager->CreateNtupleDColumn("P_total_electron_MeV");
+analysisManager->CreateNtupleDColumn("Energy_electron_MeV");
+analysisManager->CreateNtupleDColumn("angle_electron_deg");
+//analysisManager->FinishNtuple(0);
+
+//analysisManager->CreateNtuple("Electrons", "Local coords and momentum");
+analysisManager->CreateNtupleDColumn("x_positron_cm");
+analysisManager->CreateNtupleDColumn("y_positron_cm");
+analysisManager->CreateNtupleDColumn("z_positron_cm");
+analysisManager->CreateNtupleDColumn("Px_positron_MeV");
+analysisManager->CreateNtupleDColumn("Py_positron_MeV");
+analysisManager->CreateNtupleDColumn("Pz_positron_MeV");
+analysisManager->CreateNtupleDColumn("P_total_positron_MeV");
+analysisManager->CreateNtupleDColumn("Energy_positron_MeV");
+analysisManager->CreateNtupleDColumn("angle_positron_deg");
+//analysisManager->FinishNtuple(1);
+
+//analysisManager->CreateNtuple("Gammas", "Local coords and momentum");
+analysisManager->CreateNtupleDColumn("x_gamma_cm");
+analysisManager->CreateNtupleDColumn("y_gamma_cm");
+analysisManager->CreateNtupleDColumn("z_gamma_cm");
+analysisManager->CreateNtupleDColumn("Px_gamma_MeV");
+analysisManager->CreateNtupleDColumn("Py_gamma_MeV");
+analysisManager->CreateNtupleDColumn("Pz_gamma_MeV");
+analysisManager->CreateNtupleDColumn("P_total_gamma_MeV");
+analysisManager->CreateNtupleDColumn("Energy_gamma_MeV");
+analysisManager->CreateNtupleDColumn("angle_gamma_deg");
+//analysisManager->FinishNtuple(2);
+
+analysisManager->CreateNtupleDColumn("PID");
+analysisManager->FinishNtuple(0);
+
+	
+	
+>>>>>>> Update: describe what you changed
 }
 
 MyRunAction::~MyRunAction()
@@ -65,8 +112,12 @@ void MyRunAction::BeginOfRunAction(const G4Run* run)
 	std::stringstream strRunID;
 	strRunID << runID;
 	
+<<<<<<< HEAD
 
 	man->OpenFile("/home/sakib/Geant4/output_psc/hallD_check_vertex_"+strRunID.str()+".root");
+=======
+	man->OpenFile("/home/sakib/Geant4/output_psc/hallD_psc_with_shield_"+strRunID.str()+".root");
+>>>>>>> Update: describe what you changed
 	
 }
 
@@ -83,8 +134,10 @@ void MyRunAction::EndOfRunAction(const G4Run* run) {
 	std::stringstream strRunID1;
 	strRunID1 << runID1;
 	
-   	 G4cout << "Run " << run->GetRunID() << " ended." << G4endl;
+   	G4cout << "Run " << run->GetRunID() << " ended." << G4endl;
     
+    
+<<<<<<< HEAD
     	
     std::ofstream outfile("/home/sakib/Geant4/output_psc/particle_counts_det5_check2"+strRunID1.str()+".txt");
        
@@ -95,5 +148,8 @@ void MyRunAction::EndOfRunAction(const G4Run* run) {
 	
 	outfile.close();
 	
+=======
+
+>>>>>>> Update: describe what you changed
 }
  

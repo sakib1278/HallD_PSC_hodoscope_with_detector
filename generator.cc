@@ -10,8 +10,8 @@ MyPrimaryGenerator::MyPrimaryGenerator()
 	G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
 	//G4ParticleDefinition *particle = particleTable->FindParticle("e+");
 	
-	G4ThreeVector pos(-2.7*m,0.,0.);
-	G4ThreeVector mom(1.,0.,0.);
+	G4ThreeVector pos(0.,0.,-3.0*cm);
+	G4ThreeVector mom(0.,0.,1.);
 	
 	fParticleGun->SetParticlePosition(pos);
 	fParticleGun->SetParticleMomentumDirection(mom);
@@ -20,8 +20,8 @@ MyPrimaryGenerator::MyPrimaryGenerator()
 	fParticleGun->SetParticleDefinition(particle);
 	
 	//G4double photonEnergy = 8.4 * GeV + G4UniformRand() * (9.0 * GeV - 8.4 * GeV);
-	//G4double photonEnergy = 9.0 * GeV;
-	G4double photonEnergy = 12.0 * GeV;
+	G4double photonEnergy = 9.0 * GeV;
+	//G4double photonEnergy = 6.20 * GeV;
     
     	// Set photon energy
     	fParticleGun->SetParticleEnergy(photonEnergy);
