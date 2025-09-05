@@ -162,12 +162,6 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
         // Dipole Magnet (outside vacuum chamber)
         magnetBox = new G4Box("Magnet", 0.05 * m, 0.5 * m, 0.45 * m);
         magnetLV = new G4LogicalVolume(magnetBox, worldMat, "Magnet");
-<<<<<<< HEAD
-=======
-        /*G4VisAttributes* magnetVis = new G4VisAttributes(G4Colour::Green());
-	magnetVis->SetForceSolid(true);
-	magnetLV->SetVisAttributes(magnetVis);*/
->>>>>>> 0d3191cbba556d7ceb93aefb9e9c38733b65d6f3
         physMagnet = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, 1.02 * m), magnetLV, "Magnet", logicWorld, false, 0, true);
 
         // Magnetic Field in Dipole Magnet
@@ -240,10 +234,7 @@ void MyDetectorConstruction::ConstructScintillator()
 	mainScintillatorSolid = new G4Box("MainScintillator", 1.50*cm, 12.50*cm, 0.50*cm);
 	mainScintillatorLogical = new G4LogicalVolume(mainScintillatorSolid, EJ212, "MainScintillatorLogical");
 	
-<<<<<<< HEAD
 	
-=======
->>>>>>> 0d3191cbba556d7ceb93aefb9e9c38733b65d6f3
 	// Physical placement
 	mainScintillatorPhysical = new G4PVPlacement(rotCW,                   // No rotation
                       			G4ThreeVector(0.*cm, 33*cm, 397.0*cm),  // Center position
@@ -349,13 +340,7 @@ void MyDetectorConstruction::ConstructScintillator()
 	for (G4int l = 0; l < 4; l++) 
 	{
    	G4double posY = -((l - numBlocks / 2) * spacing + 3.0*cm); // Adjust for alignment
-<<<<<<< HEAD
     	G4double posX = 0.0*cm;
-=======
-    	//G4double posX = 42.*cm;                             // Centered vertically
-   	//G4double posZ = 0.0 * cm;                     // Position forward of the main block
-	G4double posX = 0.0*cm;
->>>>>>> 0d3191cbba556d7ceb93aefb9e9c38733b65d6f3
    	G4double posZ = 02.0 * cm;
    	
 	// Physical placement
@@ -365,24 +350,12 @@ void MyDetectorConstruction::ConstructScintillator()
                       "SmallScintillator2", 
                       wrapperLV1, 
                       false, 
-<<<<<<< HEAD
                       l, 
-=======
-                      l, 							// Unique copy number
->>>>>>> 0d3191cbba556d7ceb93aefb9e9c38733b65d6f3
                       true);
                       
         new G4PVPlacement(
-<<<<<<< HEAD
-    			rotCCW,                             // rotation inside wrapper
-   			G4ThreeVector(141*cm, -34*cm, 0),             
-=======
     			rotCCW,                             // No rotation inside wrapper
    			G4ThreeVector(0, -34*cm, 438*cm),              // Centered
-<<<<<<< HEAD
-=======
->>>>>>> Update: describe what you changed
->>>>>>> 0d3191cbba556d7ceb93aefb9e9c38733b65d6f3
     			wrapperLV1, 
     			"ScintInsideWrapper",
     			logicWorld,
@@ -412,15 +385,7 @@ void MyDetectorConstruction::ConstructSDandField() {
     if (detectorLogical){
     detectorLogical->SetSensitiveDetector(scintSD);
     }
-<<<<<<< HEAD
     
-=======
-<<<<<<< HEAD
-   
-=======
-    
->>>>>>> Update: describe what you changed
->>>>>>> 0d3191cbba556d7ceb93aefb9e9c38733b65d6f3
 }
 
 

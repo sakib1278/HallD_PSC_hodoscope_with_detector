@@ -13,7 +13,7 @@ void MySteppingAction::UserSteppingAction(const G4Step* step)
 
     G4String volName = volume->GetName();
 
-    // 🚫 Kill all particles inside shield volumes
+    // Kill all particles inside shield volumes
     if (volName == "FrontPoly") {
         step->GetTrack()->SetTrackStatus(fStopAndKill);
     }
