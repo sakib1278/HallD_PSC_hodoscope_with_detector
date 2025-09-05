@@ -64,7 +64,7 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *step, G4TouchableHistory *ROhist
         analysisManager->FillNtupleDColumn(6, pLocalE.mag()/MeV);
         analysisManager->FillNtupleDColumn(7, energyE/MeV);
         analysisManager->FillNtupleDColumn(8, thetaIncE);
-          
+        //analysisManager->AddNtupleRow(0);  
 	}
     // positron
     if (pdg == -11) {
@@ -89,7 +89,7 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *step, G4TouchableHistory *ROhist
         analysisManager->FillNtupleDColumn(15, pLocalP.mag()/MeV);
         analysisManager->FillNtupleDColumn(16, energyP/MeV);
         analysisManager->FillNtupleDColumn(17, thetaIncP);
-        
+        //analysisManager->AddNtupleRow(1);
   }
     // photon
     if (pdg == 22) {
@@ -113,7 +113,7 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *step, G4TouchableHistory *ROhist
         analysisManager->FillNtupleDColumn(24, pLocalG.mag()/MeV);
         analysisManager->FillNtupleDColumn(25, energyG/MeV);
         analysisManager->FillNtupleDColumn(26, thetaIncG);
-        
+        //analysisManager->AddNtupleRow(2);
     }
 
 
