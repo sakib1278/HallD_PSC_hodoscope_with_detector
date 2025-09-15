@@ -30,7 +30,8 @@ public:
 	
 	virtual G4VPhysicalVolume *Construct();
 	void ConstructScintillator();
-	
+	G4VPhysicalVolume* GetBigDetectorPhysical() const { return BigDetectorPhysical; }
+
 private:
 	G4LogicalVolume *logicDetector;
 	virtual void ConstructSDandField();

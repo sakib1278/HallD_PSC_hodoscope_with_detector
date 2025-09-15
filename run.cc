@@ -12,42 +12,21 @@ auto analysisManager = G4AnalysisManager::Instance();
 
 // One ntuple per particle type
 analysisManager->CreateNtuple("Hits", "Local coords and momentum");
-analysisManager->CreateNtupleDColumn("x_electron_cm");
-analysisManager->CreateNtupleDColumn("y_electron_cm");
-analysisManager->CreateNtupleDColumn("z_electron_cm");
-analysisManager->CreateNtupleDColumn("Px_electron_MeV");
-analysisManager->CreateNtupleDColumn("Py_electron_MeV");
-analysisManager->CreateNtupleDColumn("Pz_electron_MeV");
-analysisManager->CreateNtupleDColumn("P_total_electron_MeV");
-analysisManager->CreateNtupleDColumn("Energy_electron_MeV");
-analysisManager->CreateNtupleDColumn("angle_electron_deg");
+analysisManager->CreateNtupleDColumn("x");
+analysisManager->CreateNtupleDColumn("y");
+analysisManager->CreateNtupleDColumn("z");
+analysisManager->CreateNtupleDColumn("Px");
+analysisManager->CreateNtupleDColumn("Py");
+analysisManager->CreateNtupleDColumn("Pz");
+analysisManager->CreateNtupleDColumn("P");
+analysisManager->CreateNtupleDColumn("energy");
+analysisManager->CreateNtupleDColumn("angle");
 //analysisManager->FinishNtuple(0);
-
-//analysisManager->CreateNtuple("Electrons", "Local coords and momentum");
-analysisManager->CreateNtupleDColumn("x_positron_cm");
-analysisManager->CreateNtupleDColumn("y_positron_cm");
-analysisManager->CreateNtupleDColumn("z_positron_cm");
-analysisManager->CreateNtupleDColumn("Px_positron_MeV");
-analysisManager->CreateNtupleDColumn("Py_positron_MeV");
-analysisManager->CreateNtupleDColumn("Pz_positron_MeV");
-analysisManager->CreateNtupleDColumn("P_total_positron_MeV");
-analysisManager->CreateNtupleDColumn("Energy_positron_MeV");
-analysisManager->CreateNtupleDColumn("angle_positron_deg");
-//analysisManager->FinishNtuple(1);
-
-//analysisManager->CreateNtuple("Gammas", "Local coords and momentum");
-analysisManager->CreateNtupleDColumn("x_gamma_cm");
-analysisManager->CreateNtupleDColumn("y_gamma_cm");
-analysisManager->CreateNtupleDColumn("z_gamma_cm");
-analysisManager->CreateNtupleDColumn("Px_gamma_MeV");
-analysisManager->CreateNtupleDColumn("Py_gamma_MeV");
-analysisManager->CreateNtupleDColumn("Pz_gamma_MeV");
-analysisManager->CreateNtupleDColumn("P_total_gamma_MeV");
-analysisManager->CreateNtupleDColumn("Energy_gamma_MeV");
-analysisManager->CreateNtupleDColumn("angle_gamma_deg");
-//analysisManager->FinishNtuple(2);
-
 analysisManager->CreateNtupleDColumn("PID");
+analysisManager->CreateNtupleDColumn("x_global");
+analysisManager->CreateNtupleDColumn("y_global");
+analysisManager->CreateNtupleDColumn("z_global");
+
 analysisManager->FinishNtuple(0);
 
 
@@ -66,7 +45,7 @@ void MyRunAction::BeginOfRunAction(const G4Run* run)
 	strRunID << runID;
 	
 
-	man->OpenFile("/home/sakib/Geant4/output_psc/hallD_psc_with_shield_"+strRunID.str()+".root");
+	man->OpenFile("/home/sakib/Geant4/output_psc/hallD_psc_with_shield_and_slits_"+strRunID.str()+".root");
 
 	
 }

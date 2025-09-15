@@ -1,5 +1,4 @@
 #include "construction.hh"
-//#include "MySensitiveDetector.hh"
 #include "detector.hh"
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -134,7 +133,7 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	rotCW1->rotateX(-7.0 * deg);
 	
 	BigDetectorPhysical= new G4PVPlacement(rotCW1,
-		  G4ThreeVector(0.0, -43.0 * cm, 5.37 * m),
+		  G4ThreeVector(0.0, -43.0 * cm, 537 * cm),
                   detectorLogical,
                   "BigDetector",
                   logicWorld,
@@ -374,13 +373,13 @@ void MyDetectorConstruction::ConstructScintillator()
 void MyDetectorConstruction::ConstructSDandField() {
     MySensitiveDetector* scintSD = new MySensitiveDetector("ScintillatorSD");
 
-    if (mainScintillatorLogical) {
+    /*if (mainScintillatorLogical) {
         mainScintillatorLogical->SetSensitiveDetector(scintSD);
     }
     
     if (smallScintillatorLogical) {
         smallScintillatorLogical->SetSensitiveDetector(scintSD);
-    }
+    }*/
     
     if (detectorLogical){
     detectorLogical->SetSensitiveDetector(scintSD);
