@@ -17,7 +17,7 @@ CMake 3.10+
 A C++ compatible compiler
 
 ## Reading The Root File
-x = position of the particle in the local x direction, unit in cm\\
-Px = momentum of the particle in the local x direction, unit in MeV\\
-energy = unit in MeV\\
-angle = angle of the particle with respect to the surface of the detector, unit in degree
+x = position of the particle in the local x direction, unit in cm  
+Px = momentum of the particle in the local x direction, unit in MeV  
+energy = unit in MeV  
+angle = angle of the particle with respect to the surface of the detector, unit in degree  
